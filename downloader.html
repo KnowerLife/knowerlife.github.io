@@ -18,113 +18,264 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #000000 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #000000 0%, #434343 100%);
             padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Анимированный фон */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 20%),
+                repeating-linear-gradient(45deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 11px),
+                repeating-linear-gradient(135deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 11px);
+            animation: bgAnimation 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes bgAnimation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .container {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(30, 30, 30, 0.85);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
             width: 100%;
             max-width: 500px;
             padding: 40px;
             text-align: center;
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffffff, #aaaaaa, #666666, #222222);
+            z-index: -1;
+            border-radius: 22px;
+            animation: borderAnimation 4s linear infinite;
+            background-size: 400%;
+        }
+        
+        .container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            border-radius: 20px;
+            z-index: -1;
+        }
+        
+        @keyframes borderAnimation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         .file-icon {
             font-size: 5rem;
-            color: #4a69bd;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
+            color: #ffffff;
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            animation: iconPulse 3s ease-in-out infinite;
         }
         
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @keyframes iconPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
         
         h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            color: #ffffff;
+            margin-bottom: 15px;
             font-size: 1.8rem;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .file-info {
-            background: #e8f4fc;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 25px 0;
             text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #d1e8ff;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e0e0e0;
+            font-size: 1rem;
         }
         
         .info-row:last-child {
             border-bottom: none;
         }
         
+        .info-row i {
+            width: 24px;
+            text-align: center;
+            margin-right: 10px;
+            color: #aaaaaa;
+        }
+        
         .download-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(to right, #3498db, #2c3e50);
+            background: linear-gradient(to right, #4b4b4b, #2c2c2c);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 16px 45px;
             font-size: 1.1rem;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-            margin-top: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
         
         .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.15);
+            background: linear-gradient(to right, #5a5a5a, #3c3c3c);
+        }
+        
+        .download-btn:hover::before {
+            left: 100%;
         }
         
         .download-btn i {
-            margin-right: 10px;
+            margin-right: 12px;
+        }
+        
+        .source-btn {
+            display: inline-block;
+            margin-top: 25px;
+            color: #bbbbbb;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .source-btn:hover {
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .source-btn i {
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .source-btn:hover i {
+            transform: translateX(3px);
         }
         
         .footer {
             margin-top: 30px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            color: #888888;
+            font-size: 0.85rem;
         }
         
         .error {
-            color: #e74c3c;
-            padding: 20px;
+            color: #ff6b6b;
+            padding: 18px;
             border-radius: 10px;
-            background: rgba(231, 76, 60, 0.1);
-            margin-top: 20px;
+            background: rgba(255, 107, 107, 0.1);
+            margin: 20px 0;
+            border: 1px solid rgba(255, 107, 107, 0.2);
         }
         
         .auto-download {
-            color: #3498db;
-            margin-top: 15px;
+            color: #aaaaaa;
+            margin-top: 20px;
             font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        #countdown {
+            color: #ffffff;
+            font-weight: bold;
+            min-width: 20px;
+            display: inline-block;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ffffff, #cccccc);
+            width: 0%;
+            transition: width 1s linear;
         }
         
         @media (max-width: 480px) {
             .container {
-                padding: 25px;
+                padding: 30px 20px;
             }
             
             .file-icon {
@@ -133,6 +284,11 @@
             
             h1 {
                 font-size: 1.5rem;
+            }
+            
+            .download-btn {
+                padding: 14px 35px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -157,16 +313,24 @@
             </div>
         </div>
         
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
         <button id="downloadButton" class="download-btn">
             <i class="fas fa-download"></i> Скачать файл
         </button>
         
         <p class="auto-download">
-            <i class="fas fa-sync-alt"></i> Автоматическая загрузка начнётся через <span id="countdown">3</span> сек...
+            <i class="fas fa-clock"></i> Автоматическая загрузка через <span id="countdown">5</span> сек...
         </p>
         
+        <a href="https://knowerlife.ru" class="source-btn" target="_blank">
+            <i class="fas fa-external-link-alt"></i> Перейти на источник
+        </a>
+        
         <p class="footer">
-            <i class="fas fa-shield-alt"></i> Файл предоставлен безопасным источником
+            <i class="fas fa-lock"></i> Безопасное скачивание · <i class="fas fa-shield-alt"></i> Защищено
         </p>
     </div>
 
@@ -202,7 +366,7 @@
             downloadButton.addEventListener('click', () => downloadFile(filename, content));
             
             // Автоматическое скачивание с таймером
-            startCountdown(3, () => downloadFile(filename, content));
+            startCountdown(5, () => downloadFile(filename, content));
         });
         
         function downloadFile(filename, content) {
@@ -216,28 +380,29 @@
                 document.body.removeChild(a);
                 
                 // Обновление кнопки после скачивания
-                document.getElementById('downloadButton').innerHTML = 
-                    '<i class="fas fa-check"></i> Файл скачан!';
-                document.getElementById('downloadButton').style.background = 
-                    'linear-gradient(to right, #2ecc71, #27ae60)';
+                const btn = document.getElementById('downloadButton');
+                btn.innerHTML = '<i class="fas fa-check"></i> Файл скачан!';
+                btn.style.background = 'linear-gradient(to right, #2b8a3e, #2f9e44)';
+                btn.onclick = null;
+                
+                // Остановка таймера
+                document.querySelector('.auto-download').innerHTML = 
+                    '<i class="fas fa-check-circle"></i> Загрузка завершена!';
             } catch (e) {
                 showError("Ошибка при создании файла: " + e.message);
             }
         }
         
         function calculateFileSize(base64) {
-            // Расчет размера файла из base64
             const padding = (base64.match(/=/g) || []).length;
             const size = base64.length * 0.75 - padding;
             
-            // Форматирование размера
             if (size < 1024) return size + ' Б';
             if (size < 1048576) return (size / 1024).toFixed(1) + ' КБ';
             return (size / 1048576).toFixed(1) + ' МБ';
         }
         
         function getFileType(filename) {
-            // Определение типа файла по расширению
             const ext = filename.split('.').pop().toLowerCase();
             const types = {
                 'txt': 'Текстовый файл',
@@ -249,14 +414,21 @@
                 'docx': 'Документ Word',
                 'xls': 'Таблица Excel',
                 'xlsx': 'Таблица Excel',
-                'zip': 'Архив ZIP'
+                'zip': 'Архив ZIP',
+                'mp3': 'Аудио файл',
+                'mp4': 'Видео файл'
             };
             return types[ext] || 'Файл ' + ext.toUpperCase();
         }
         
         function startCountdown(seconds, callback) {
             const countdownElement = document.getElementById('countdown');
+            const progressBar = document.getElementById('progress');
             let count = seconds;
+            
+            // Анимация прогресс-бара
+            progressBar.style.width = '100%';
+            progressBar.style.transition = `width ${seconds}s linear`;
             
             const countdown = setInterval(() => {
                 count--;
@@ -266,7 +438,7 @@
                     clearInterval(countdown);
                     callback();
                     document.querySelector('.auto-download').innerHTML = 
-                        '<i class="fas fa-check-circle"></i> Загрузка завершена!';
+                        '<i class="fas fa-check-circle"></i> Загрузка началась...';
                 }
             }, 1000);
         }
@@ -276,7 +448,7 @@
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error';
             errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-            container.appendChild(errorDiv);
+            container.insertBefore(errorDiv, container.firstChild);
         }
         
         function redirectToHome() {
