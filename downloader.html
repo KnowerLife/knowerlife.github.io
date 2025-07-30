@@ -1,32 +1,289 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download File</title>
+    <title>Скачать файл</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .file-icon {
+            font-size: 5rem;
+            color: #4a69bd;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .file-info {
+            background: #e8f4fc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #d1e8ff;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            margin-top: 20px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6);
+        }
+        
+        .download-btn i {
+            margin-right: 10px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .error {
+            color: #e74c3c;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(231, 76, 60, 0.1);
+            margin-top: 20px;
+        }
+        
+        .auto-download {
+            color: #3498db;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .file-icon {
+                font-size: 4rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class="fas fa-file-download file-icon"></i>
+        <h1>Ваш файл готов к скачиванию</h1>
+        
+        <div class="file-info">
+            <div class="info-row">
+                <span><i class="fas fa-file-alt"></i> Имя файла:</span>
+                <span id="fileName">-</span>
+            </div>
+            <div class="info-row">
+                <span><i class="fas fa-weight-hanging"></i> Размер:</span>
+                <span id="fileSize">-</span>
+            </div>
+            <div class="info-row">
+                <span><i class="fas fa-info-circle"></i> Тип:</span>
+                <span id="fileType">Текстовый файл</span>
+            </div>
+        </div>
+        
+        <button id="downloadButton" class="download-btn">
+            <i class="fas fa-download"></i> Скачать файл
+        </button>
+        
+        <p class="auto-download">
+            <i class="fas fa-sync-alt"></i> Автоматическая загрузка начнётся через <span id="countdown">3</span> сек...
+        </p>
+        
+        <p class="footer">
+            <i class="fas fa-shield-alt"></i> Файл предоставлен безопасным источником
+        </p>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const params = new URLSearchParams(window.location.search);
+            
+            // Проверка параметров
             if (!params.has('filename') || !params.has('content')) {
-                window.location.href = "https://knowerlife.ru";
+                showError("Ошибка: Недостаточно данных для загрузки");
+                redirectToHome();
                 return;
             }
+            
             const filename = params.get('filename');
             const content = params.get('content');
-            const downloadFile = () => {
+            
+            // Отображение информации о файле
+            document.getElementById('fileName').textContent = filename;
+            document.getElementById('fileType').textContent = getFileType(filename);
+            
+            // Рассчет размера файла
+            try {
+                const fileSize = calculateFileSize(content);
+                document.getElementById('fileSize').textContent = fileSize;
+            } catch (e) {
+                document.getElementById('fileSize').textContent = "Неизвестно";
+                console.error("Ошибка расчета размера файла:", e);
+            }
+            
+            // Настройка кнопки
+            const downloadButton = document.getElementById('downloadButton');
+            downloadButton.addEventListener('click', () => downloadFile(filename, content));
+            
+            // Автоматическое скачивание с таймером
+            startCountdown(3, () => downloadFile(filename, content));
+        });
+        
+        function downloadFile(filename, content) {
+            try {
                 const a = document.createElement('a');
                 a.href = 'data:text/plain;base64,' + content;
                 a.download = filename;
+                a.style.display = 'none';
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
+                
+                // Обновление кнопки после скачивания
+                document.getElementById('downloadButton').innerHTML = 
+                    '<i class="fas fa-check"></i> Файл скачан!';
+                document.getElementById('downloadButton').style.background = 
+                    'linear-gradient(to right, #2ecc71, #27ae60)';
+            } catch (e) {
+                showError("Ошибка при создании файла: " + e.message);
+            }
+        }
+        
+        function calculateFileSize(base64) {
+            // Расчет размера файла из base64
+            const padding = (base64.match(/=/g) || []).length;
+            const size = base64.length * 0.75 - padding;
+            
+            // Форматирование размера
+            if (size < 1024) return size + ' Б';
+            if (size < 1048576) return (size / 1024).toFixed(1) + ' КБ';
+            return (size / 1048576).toFixed(1) + ' МБ';
+        }
+        
+        function getFileType(filename) {
+            // Определение типа файла по расширению
+            const ext = filename.split('.').pop().toLowerCase();
+            const types = {
+                'txt': 'Текстовый файл',
+                'pdf': 'PDF документ',
+                'jpg': 'Изображение JPEG',
+                'jpeg': 'Изображение JPEG',
+                'png': 'Изображение PNG',
+                'doc': 'Документ Word',
+                'docx': 'Документ Word',
+                'xls': 'Таблица Excel',
+                'xlsx': 'Таблица Excel',
+                'zip': 'Архив ZIP'
             };
-            document.getElementById('downloadButton').textContent = `Download ${filename}`;
-            document.getElementById('downloadButton').style.display = 'block';
-            document.getElementById('downloadButton').addEventListener('click', downloadFile);
-            downloadFile();
-        });
+            return types[ext] || 'Файл ' + ext.toUpperCase();
+        }
+        
+        function startCountdown(seconds, callback) {
+            const countdownElement = document.getElementById('countdown');
+            let count = seconds;
+            
+            const countdown = setInterval(() => {
+                count--;
+                countdownElement.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdown);
+                    callback();
+                    document.querySelector('.auto-download').innerHTML = 
+                        '<i class="fas fa-check-circle"></i> Загрузка завершена!';
+                }
+            }, 1000);
+        }
+        
+        function showError(message) {
+            const container = document.querySelector('.container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            container.appendChild(errorDiv);
+        }
+        
+        function redirectToHome() {
+            setTimeout(() => {
+                window.location.href = "https://knowerlife.ru";
+            }, 5000);
+        }
     </script>
-</head>
-<body>
-    <button id="downloadButton" style="display: none;"></button>
 </body>
 </html>
